@@ -5,19 +5,9 @@ import axios from 'axios';
 import FrameDto from '../viewModel/frameDto';
 import ThrowDto from '../viewModel/throwDto';
 
-// interface ScoreboardProps {
-
-// }
-
-// interface ScoreboardState {
-//     frames: Array<FrameDto>,
-//     submitSuccess?: boolean;
-//     pins?: string,
-//     score?: number,
-//     errorMessage: string,
-// }
-
 const houses: Array<string> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
+const BASE_URL: string = `http://localhost:8080/game`;
 
 export const Scoreboard = () => {
 
@@ -31,7 +21,7 @@ export const Scoreboard = () => {
     }
 
     async function submitForm() {
-        await axios.get(`http://localhost:8080/game?pins=${pins}`)
+        await axios.get(BASE_URL.concat(`?pins=${pins}`))
             .then(res => {
                 let framesDto: Array<FrameDto> = mapToFramesDtos(res.data.frames);
                 setFrames(framesDto);
@@ -43,7 +33,7 @@ export const Scoreboard = () => {
     }
 
     async function reset() {
-        await axios.post(`http://localhost:8080/game`)
+        await axios.post(BASE_URL)
             .then(() => {
                 setFrames([]);
                 setErrorMessage("");
@@ -122,7 +112,7 @@ export const Scoreboard = () => {
     }
 
     function overallScore(frames: Array<FrameDto>): number | null {
-        return (frames.length == 10 && frames[9].isScoreKnown) ? frames[9].score : null;
+        return (frames.length === 10 && frames[9].isScoreKnown) ? frames[9].score : null;
     }
 
     return (
