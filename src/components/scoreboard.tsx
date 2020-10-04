@@ -5,25 +5,24 @@ import axios from 'axios';
 import FrameDto from '../viewModel/frameDto';
 import ThrowDto from '../viewModel/throwDto';
 
-interface ScoreboardProps {
+// interface ScoreboardProps {
 
-}
+// }
 
-interface ScoreboardState {
-    frames: Array<FrameDto>,
-    submitSuccess?: boolean;
-    pins?: string,
-    score?: number,
-    errorMessage: string,
-}
+// interface ScoreboardState {
+//     frames: Array<FrameDto>,
+//     submitSuccess?: boolean;
+//     pins?: string,
+//     score?: number,
+//     errorMessage: string,
+// }
 
-const houses: Array<string> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Su'];
+const houses: Array<string> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
 export const Scoreboard = () => {
 
     const [frames, setFrames] = useState<Array<FrameDto>>([]);
     const [pins, setPins] = useState<string>();
-    const [score, setScore] = useState<number>();
     const [errorMessage, setErrorMessage] = useState<string>("");
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -36,7 +35,6 @@ export const Scoreboard = () => {
             .then(res => {
                 let framesDto: Array<FrameDto> = mapToFramesDtos(res.data.frames);
                 setFrames(framesDto);
-                setScore(res.data.score);
             })
             .catch(err => {
                 console.log(err);
@@ -48,7 +46,6 @@ export const Scoreboard = () => {
         await axios.post(`http://localhost:8080/game`)
             .then(() => {
                 setFrames([]);
-                setScore(0);
                 setErrorMessage("");
             })
             .catch(err => console.log(err));
@@ -80,7 +77,8 @@ export const Scoreboard = () => {
                 bonusThrowDto,
                 frame.isLastFrame,
                 frame.isStrike,
-                frame.isSpare);
+                frame.isSpare,
+                frame.isScoreKnown);
             framesDtos.push(frameDto);
         }
         return framesDtos;
@@ -123,11 +121,16 @@ export const Scoreboard = () => {
         }
     }
 
+    function overallScore(frames: Array<FrameDto>): number | null {
+        return (frames.length == 10 && frames[9].isScoreKnown) ? frames[9].score : null;
+    }
+
     return (
         <div className="scoreboard">
             <h1>SCOREBOARD</h1>
             <div className="frames">
                 {renderGame(houses, frames)}
+                {<Frame key={12} house={'Total'} isLastFrame={false} isStrike={false} isSpare={false} score={overallScore(frames)} />}
             </div>
             <div className="form">
                 <label>Pins struck:</label>
