@@ -1,0 +1,15 @@
+.frame {
+    float: left;
+    border: 1px solid #000000;
+    width: auto;
+    height: auto;
+}
+.score {
+    width: 40px;
+    height: 40px;
+}
+.house {
+    border-bottom: 1px solid #000000;
+
+}
+

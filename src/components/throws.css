@@ -1,0 +1,17 @@
+.throws {
+    border-bottom: 1px solid #000000;
+    width: auto;
+    text-align: center;
+    width: auto;
+    display: flex;
+
+}
+.throw {
+    float: left;
+    width: 40px;
+    height: 40px;
+}
+
+.throws .throw:not(:last-child){
+    border-right: 1px solid #000000;
+}
