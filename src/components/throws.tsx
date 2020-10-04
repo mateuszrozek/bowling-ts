@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './throws.css';
 
 interface ThrowsProps {
@@ -10,9 +10,9 @@ interface ThrowsProps {
     isSpare: boolean,
 }
 
-export default class Throws extends Component<ThrowsProps> {
+export const Throws = (props: ThrowsProps) => {
 
-    determinePrintedValueFirstThrow(pins: number | null, isStrike: boolean): string {
+    function determinePrintedValueFirstThrow(pins: number | null, isStrike: boolean): string {
         let result: string;
         if (null !== pins) {
             if (isStrike) {
@@ -27,7 +27,7 @@ export default class Throws extends Component<ThrowsProps> {
         return result;
     }
 
-    determinePrintedValueSecondThrows(pins: number | null, isLastFrame: boolean, isStrike: boolean, isSpare: boolean): string {
+    function determinePrintedValueSecondThrows(pins: number | null, isLastFrame: boolean, isStrike: boolean, isSpare: boolean): string {
         let result: string;
         if (null !== pins) {
             if (isLastFrame) {
@@ -53,7 +53,7 @@ export default class Throws extends Component<ThrowsProps> {
         return result;
     }
 
-    determinePrintedValueThirdThrows(pins: number | null, isLastFrame: boolean, isStrike: boolean, isSpare: boolean): string {
+    function determinePrintedValueThirdThrows(pins: number | null, isLastFrame: boolean, isStrike: boolean, isSpare: boolean): string {
         let result: string;
         if (null !== pins) {
             if (isSpare) {
@@ -63,7 +63,6 @@ export default class Throws extends Component<ThrowsProps> {
             } else {
                 result = pins.toString();
             }
-
         }
         else {
             result = "";
@@ -71,17 +70,15 @@ export default class Throws extends Component<ThrowsProps> {
         return result;
     }
 
-    render() {
-        return (
-            <div className='throws'>
-                <div className='throw'>
-                    {this.props.firstThrowPins !== undefined ? this.determinePrintedValueFirstThrow(this.props.firstThrowPins, this.props.isStrike) : ""}
-                </div>
-                <div className='throw'>
-                    {this.props.secondThrowPins !== undefined ? this.determinePrintedValueSecondThrows(this.props.secondThrowPins, this.props.isLastFrame, this.props.isStrike, this.props.isSpare) : ""}
-                </div>
-                {this.props.isLastFrame && <div className='throw'>{this.props.bonusThrowPins !== undefined ? this.determinePrintedValueThirdThrows(this.props.bonusThrowPins, this.props.isLastFrame, this.props.isStrike, this.props.isSpare) : ""}</div>}
+    return (
+        <div className='throws'>
+            <div className='throw'>
+                {props.firstThrowPins !== undefined ? determinePrintedValueFirstThrow(props.firstThrowPins, props.isStrike) : ""}
             </div>
-        );
-    }
+            <div className='throw'>
+                {props.secondThrowPins !== undefined ? determinePrintedValueSecondThrows(props.secondThrowPins, props.isLastFrame, props.isStrike, props.isSpare) : ""}
+            </div>
+            {props.isLastFrame && <div className='throw'>{props.bonusThrowPins !== undefined ? determinePrintedValueThirdThrows(props.bonusThrowPins, props.isLastFrame, props.isStrike, props.isSpare) : ""}</div>}
+        </div>
+    );
 }

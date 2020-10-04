@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import Frame from './frame';
+import React, { useState } from 'react';
+import { Frame } from './frame';
 import './scoreboard.css'
 import axios from 'axios';
 import FrameDto from '../viewModel/frameDto';
@@ -14,73 +14,48 @@ interface ScoreboardState {
     submitSuccess?: boolean;
     pins?: string,
     score?: number,
-    errorMessage?: string,
-    
+    errorMessage: string,
 }
 
 const houses: Array<string> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Su'];
 
-export default class Scoreboard extends Component<ScoreboardProps, ScoreboardState> {
+export const Scoreboard = () => {
 
-    constructor(props: ScoreboardProps) {
-        super(props);
-        this.state = { frames: [] }
+    const [frames, setFrames] = useState<Array<FrameDto>>([]);
+    const [pins, setPins] = useState<string>();
+    const [score, setScore] = useState<number>();
+    const [errorMessage, setErrorMessage] = useState<string>("");
+
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setPins(e.target.value);
+        setErrorMessage("");
     }
 
-    private handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({ pins: e.target.value });
-    }
-
-    private handleSubmit = async (
-        e: React.FormEvent<HTMLFormElement>
-    ): Promise<void> => {
-        e.preventDefault();
-
-        const submitSuccess: boolean = await this.submitForm();
-        this.setState({ submitSuccess });
-    };
-
-    private async submitForm(): Promise<boolean> {
-        const pins = this.state.pins;
-        axios.get(`http://localhost:8080/game?pins=${pins}`)
+    async function submitForm() {
+        await axios.get(`http://localhost:8080/game?pins=${pins}`)
             .then(res => {
-                let framesDto: Array<FrameDto> = this.mapToFramesDtos(res.data.frames);
-                this.setState({
-                    frames: framesDto,
-                    score: res.data.score,
-                });
+                let framesDto: Array<FrameDto> = mapToFramesDtos(res.data.frames);
+                setFrames(framesDto);
+                setScore(res.data.score);
             })
             .catch(err => {
-                // console.log(err);
-                this.setState({errorMessage: JSON.stringify(err.response.data)});
+                console.log(err);
+                setErrorMessage(err.response.data);
             });
+    }
+
+    async function reset() {
+        await axios.post(`http://localhost:8080/game`)
+            .then(() => {
+                setFrames([]);
+                setScore(0);
+                setErrorMessage("");
+            })
+            .catch(err => console.log(err));
         return true;
     }
 
-    private async reset(): Promise<boolean> {
-        axios.post(`http://localhost:8080/game`)
-            .then(res => {
-                this.setState({
-                    frames: [],
-                    score: 0,
-                    errorMessage: ""
-                });
-            })
-            .catch(err => {
-                // console.log(err);
-                
-                //let errorObject=JSON.parse(JSON.stringify(err));
-                const {response} = err;
-                const {reqest, ...errorObject} = response;
-                
-                console.log(JSON.parse(errorObject));
-
-                this.setState({errorMessage: 'null'});
-            });
-        return true;
-    }
-
-    private mapToFramesDtos(frames: any): Array<FrameDto> {
+    function mapToFramesDtos(frames: any): Array<FrameDto> {
         let framesDtos: Array<FrameDto> = [];
         for (let frame of frames) {
             let firstThrowDto: ThrowDto = new ThrowDto(frame.firstThrow.pins);
@@ -111,16 +86,15 @@ export default class Scoreboard extends Component<ScoreboardProps, ScoreboardSta
         return framesDtos;
     }
 
-    renderGame(houses: Array<string>, frames: Array<FrameDto>) {
-        console.log(frames);
+    function renderGame(houses: Array<string>, frames: Array<FrameDto>) {
         return (
             houses.map((house, i) => (
-                this.processFrame(house, i, frames)
+                processFrame(house, i, frames)
             ))
         )
     }
 
-    processFrame(house: string, i: number, frames: Array<FrameDto>) {
+    function processFrame(house: string, i: number, frames: Array<FrameDto>) {
         if (frames.length > 0) {
             let frame = frames[i];
             if (frame !== undefined) {
@@ -147,26 +121,21 @@ export default class Scoreboard extends Component<ScoreboardProps, ScoreboardSta
                 <Frame key={i} house={house} isLastFrame={house === '10' ? true : false} isStrike={false} isSpare={false} />
             );
         }
-
     }
 
-    render() {
-        return (
-            <div>
-                <h1>SCOREBOARD</h1>
-                <div>
-                    {this.renderGame(houses, this.state.frames)}
-                </div>
-                <form className='.form' onSubmit={this.handleSubmit}>
-                    <label className='.label'>
-                        Pins stroken:
-                    <input type="number" name="pins" min="0" max="10" onChange={(e) => this.handleChange(e)} />
-                    </label>
-                    <input type="submit" value="Post" />
-                </form>
-                <button onClick={() => this.reset()}>Reset</button>
-                <div>{this.state.errorMessage}</div>
+    return (
+        <div className="scoreboard">
+            <h1>SCOREBOARD</h1>
+            <div className="frames">
+                {renderGame(houses, frames)}
             </div>
-        );
-    }
+            <div className="form">
+                <label>Pins stroken:</label>
+                <input type="number" name="pins" min="0" max="10" onChange={(e) => handleChange(e)} />
+                <button onClick={() => submitForm()}>Submit</button>
+                <button onClick={() => reset()}>Reset</button>
+            </div>
+            {errorMessage === "" ? null : <div className="error-message">{errorMessage}</div>}
+        </div>
+    );
 }

@@ -1,3 +1,30 @@
+.scoreboard {
+    display: flex;
+    flex-direction: column;
+}
+
 .form{
     margin-top: 20px;
+    display: inherit;
+    justify-content: center;
+}
+
+.form input, button{
+    margin-left: 5px;
+    padding: 5px;
+}
+
+.form label {
+    font-size: 0.8em;
+}
+.error-message{
+    background-color: lightcoral;
+    border: 1px solid crimson;
+    margin: 20px;
+    padding: 10px;
+}
+
+.frames {
+    display: flex;
+    justify-content: center;
 }
