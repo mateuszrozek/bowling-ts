@@ -124,7 +124,7 @@ export const Scoreboard = () => {
             </div>
             <div className="form">
                 <label>Pins struck:</label>
-                <input type="number" name="pins" min="0" max="10" onChange={(e) => handleChange(e)} />
+                <input type="number" name="pins" min="0" max="10" defaultValue="0" onChange={(e) => handleChange(e)} />
                 <button onClick={() => submitForm()}>Submit</button>
                 <button onClick={() => reset()}>Reset</button>
             </div>
