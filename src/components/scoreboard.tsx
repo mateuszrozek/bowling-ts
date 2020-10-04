@@ -130,7 +130,7 @@ export const Scoreboard = () => {
                 {renderGame(houses, frames)}
             </div>
             <div className="form">
-                <label>Pins stroken:</label>
+                <label>Pins struck:</label>
                 <input type="number" name="pins" min="0" max="10" onChange={(e) => handleChange(e)} />
                 <button onClick={() => submitForm()}>Submit</button>
                 <button onClick={() => reset()}>Reset</button>
