@@ -10,13 +10,17 @@ interface ThrowsProps {
     isSpare: boolean,
 }
 
+const STRIKE_SIGN = 'X';
+const SPARE_SIGN = '/';
+const STRIKE_NUMBER = 10;
+const EMPTY_STRING = "";
 export const Throws = (props: ThrowsProps) => {
 
     function determinePrintedValueFirstThrow(pins: number | null, isStrike: boolean): string {
         let result: string;
         if (null !== pins) {
             if (isStrike) {
-                result = 'X';
+                result = STRIKE_SIGN;
             } else {
                 result = pins.toString();
             }
@@ -32,28 +36,28 @@ export const Throws = (props: ThrowsProps) => {
         if (null !== pins) {
             if (isLastFrame) {
                 if (isStrike) {
-                    if ('10' === pins.toString()) {
-                        result = 'X';
+                    if (STRIKE_NUMBER === pins) {
+                        result = STRIKE_SIGN;
                     }
                     else {
                         result = pins.toString();
                     }
                 } else if (isSpare) {
-                    result = '/';
+                    result = SPARE_SIGN;
                 } else {
                     result = pins.toString();
                 }
             }
             else {
                 if (isSpare) {
-                    result = '/';
+                    result = SPARE_SIGN;
                 } else {
                     result = pins.toString();
                 }
             }
         }
         else {
-            result = "";
+            result = EMPTY_STRING;
         }
         return result;
     }
@@ -61,37 +65,42 @@ export const Throws = (props: ThrowsProps) => {
     function determinePrintedValueThirdThrow(firstThrow: number | null, secondThrow: number | null, bonusThrow: number | null): string {
         let result: string;
         if (null !== firstThrow && null !== secondThrow && null !== bonusThrow) {
-            if (firstThrow === 10) {
-                if (bonusThrow === 10) {
-                    result = 'X';
-                } else if (secondThrow + bonusThrow === 10) {
-                    result = '/';
+            if (firstThrow === STRIKE_NUMBER) {
+                if (bonusThrow === STRIKE_NUMBER) {
+                    result = STRIKE_SIGN;
+                } else if (secondThrow + bonusThrow === STRIKE_NUMBER) {
+                    result = SPARE_SIGN;
                 }
                 else {
                     result = bonusThrow.toString();
                 }
             }
-            else if(firstThrow !== 10 && firstThrow + secondThrow === 10){
+            else if (firstThrow !== STRIKE_NUMBER && firstThrow + secondThrow === STRIKE_NUMBER) {
                 result = bonusThrow.toString();
-            } else if(secondThrow !== 10 && secondThrow + bonusThrow === 10){
-                result = '/';
+            } else if (secondThrow !== STRIKE_NUMBER && secondThrow + bonusThrow === STRIKE_NUMBER) {
+                result = SPARE_SIGN;
             } else {
                 result = bonusThrow.toString();
             }
         }
-        else result = "";
+        else result = EMPTY_STRING;
         return result;
     }
 
     return (
         <div className='throws'>
             <div className='throw'>
-                {props.firstThrowPins !== undefined ? determinePrintedValueFirstThrow(props.firstThrowPins, props.isStrike) : ""}
+                {props.firstThrowPins !== undefined ? determinePrintedValueFirstThrow(props.firstThrowPins, props.isStrike) : EMPTY_STRING}
             </div>
             <div className='throw'>
-                {props.secondThrowPins !== undefined ? determinePrintedValueSecondThrow(props.secondThrowPins, props.isLastFrame, props.isStrike, props.isSpare) : ""}
+                {props.secondThrowPins !== undefined ? determinePrintedValueSecondThrow(props.secondThrowPins, props.isLastFrame, props.isStrike, props.isSpare) : EMPTY_STRING}
             </div>
-            {props.isLastFrame && <div className='throw'>{props.firstThrowPins !== undefined && props.secondThrowPins !== undefined && props.bonusThrowPins !== undefined ? determinePrintedValueThirdThrow(props.firstThrowPins, props.secondThrowPins, props.bonusThrowPins) : ""}</div>}
+            {props.isLastFrame &&
+                <div className='throw'>
+                    {props.firstThrowPins !== undefined && props.secondThrowPins !== undefined && props.bonusThrowPins !== undefined
+                        ? determinePrintedValueThirdThrow(props.firstThrowPins, props.secondThrowPins, props.bonusThrowPins)
+                        : EMPTY_STRING}
+                </div>}
         </div>
     );
 }

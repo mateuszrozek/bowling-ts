@@ -5,23 +5,28 @@ import axios from 'axios';
 import FrameDto from '../dto/frameDto';
 import ThrowDto from '../dto/throwDto';
 
-const houses: Array<string> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-
-const BASE_URL: string = `http://localhost:8080/game`;
-
 export const Scoreboard = () => {
 
     const [frames, setFrames] = useState<Array<FrameDto>>([]);
     const [pins, setPins] = useState<string>();
     const [errorMessage, setErrorMessage] = useState<string>("");
 
+    const houses: Array<string> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    const BASE_URL: string = `http://localhost:8080/game`;
+    const GET_URL = BASE_URL + `?pins=${pins}`;
+    const totalTitle = 'Total';
+    const lastFrameTitle = '10';
+    const EMPTY_STRING = "";
+    const MAX_HOUSES = 10;
+    const LAST_HOUSE_POSITION = 9;
+
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         setPins(e.target.value);
-        setErrorMessage("");
+        setErrorMessage(EMPTY_STRING);
     }
 
     async function submitForm() {
-        await axios.get(BASE_URL + `?pins=${pins}`)
+        await axios.get(GET_URL)
             .then(res => {
                 let framesDto: Array<FrameDto> = mapToFramesDtos(res.data.frames);
                 setFrames(framesDto);
@@ -36,7 +41,7 @@ export const Scoreboard = () => {
         await axios.post(BASE_URL)
             .then(() => {
                 setFrames([]);
-                setErrorMessage("");
+                setErrorMessage(EMPTY_STRING);
             })
             .catch(err => console.log(err));
         return true;
@@ -99,20 +104,20 @@ export const Scoreboard = () => {
             }
             else {
                 return (
-                    <Frame key={i} house={house} isLastFrame={house === '10' ? true : false} isStrike={false} isSpare={false} />
+                    <Frame key={i} house={house} isLastFrame={house === lastFrameTitle ? true : false} isStrike={false} isSpare={false} />
                 );
             }
 
         }
         else {
             return (
-                <Frame key={i} house={house} isLastFrame={house === '10' ? true : false} isStrike={false} isSpare={false} />
+                <Frame key={i} house={house} isLastFrame={house === lastFrameTitle ? true : false} isStrike={false} isSpare={false} />
             );
         }
     }
 
     function overallScore(frames: Array<FrameDto>): number | null {
-        return (frames.length === 10 && frames[9].isScoreKnown) ? frames[9].score : null;
+        return (frames.length === MAX_HOUSES && frames[LAST_HOUSE_POSITION].isScoreKnown) ? frames[LAST_HOUSE_POSITION].score : null;
     }
 
     return (
@@ -120,7 +125,7 @@ export const Scoreboard = () => {
             <h1>SCOREBOARD</h1>
             <div className="frames">
                 {renderGame(houses, frames)}
-                {<Frame key={12} house={'Total'} isLastFrame={false} isStrike={false} isSpare={false} score={overallScore(frames)} />}
+                {<Frame key={12} house={totalTitle} isLastFrame={false} isStrike={false} isSpare={false} score={overallScore(frames)} />}
             </div>
             <div className="form">
                 <label>Pins struck:</label>
@@ -128,7 +133,7 @@ export const Scoreboard = () => {
                 <button onClick={() => submitForm()}>Submit</button>
                 <button onClick={() => reset()}>Reset</button>
             </div>
-            {errorMessage === "" ? null : <div className="error-message">{errorMessage}</div>}
+            {errorMessage === EMPTY_STRING ? null : <div className="error-message">{errorMessage}</div>}
         </div>
     );
 }
