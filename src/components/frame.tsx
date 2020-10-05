@@ -1,7 +1,7 @@
 import { Throws } from './throws';
 import React from 'react';
 import './frame.css';
-import ThrowDto from '../viewModel/throwDto';
+import ThrowDto from '../dto/throwDto';
 
 interface FrameProps {
     firstThrow?: ThrowDto,

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Frame } from './frame';
 import './scoreboard.css'
 import axios from 'axios';
-import FrameDto from '../viewModel/frameDto';
-import ThrowDto from '../viewModel/throwDto';
+import FrameDto from '../dto/frameDto';
+import ThrowDto from '../dto/throwDto';
 
 const houses: Array<string> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
@@ -21,7 +21,7 @@ export const Scoreboard = () => {
     }
 
     async function submitForm() {
-        await axios.get(BASE_URL.concat(`?pins=${pins}`))
+        await axios.get(BASE_URL + `?pins=${pins}`)
             .then(res => {
                 let framesDto: Array<FrameDto> = mapToFramesDtos(res.data.frames);
                 setFrames(framesDto);

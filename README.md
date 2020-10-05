@@ -1,3 +1,8 @@
+//note of Mateusz Rożek
+To run ensure that server (https://github.com/mateuszrozek/bowling-srv) is running.
+
+
+//generic note
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
