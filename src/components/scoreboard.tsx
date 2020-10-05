@@ -3,7 +3,7 @@ import { Frame } from './frame';
 import './scoreboard.css'
 import axios from 'axios';
 import FrameDto from '../dto/frameDto';
-import ThrowDto from '../dto/throwDto';
+import Mapper from '../utils/mapper';
 
 export const Scoreboard = () => {
 
@@ -28,7 +28,7 @@ export const Scoreboard = () => {
     async function submitForm() {
         await axios.get(GET_URL)
             .then(res => {
-                let framesDto: Array<FrameDto> = mapToFramesDtos(res.data.frames);
+                let framesDto: Array<FrameDto> = Mapper.mapToFramesDtos(res.data.frames);
                 setFrames(framesDto);
             })
             .catch(err => {
@@ -45,38 +45,6 @@ export const Scoreboard = () => {
             })
             .catch(err => console.log(err));
         return true;
-    }
-
-    function mapToFramesDtos(frames: any): Array<FrameDto> {
-        let framesDtos: Array<FrameDto> = [];
-        for (let frame of frames) {
-            let firstThrowDto: ThrowDto = new ThrowDto(frame.firstThrow.pins);
-            let secondThrowDto: ThrowDto | null;
-            if (undefined !== frame.secondThrow) {
-                secondThrowDto = new ThrowDto(frame.secondThrow.pins);
-            }
-            else {
-                secondThrowDto = null;
-            }
-            let bonusThrowDto: ThrowDto | null;
-            if (undefined !== frame.bonusThrow) {
-                bonusThrowDto = new ThrowDto(frame.bonusThrow.pins);
-            }
-            else {
-                bonusThrowDto = null;
-            }
-            let frameDto: FrameDto = new FrameDto(
-                frame.score,
-                firstThrowDto,
-                secondThrowDto,
-                bonusThrowDto,
-                frame.isLastFrame,
-                frame.isStrike,
-                frame.isSpare,
-                frame.isScoreKnown);
-            framesDtos.push(frameDto);
-        }
-        return framesDtos;
     }
 
     function renderGame(houses: Array<string>, frames: Array<FrameDto>) {
