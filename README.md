@@ -1,8 +1,9 @@
-//note of Mateusz Rożek
-To run ensure that server (https://github.com/mateuszrozek/bowling-srv) is running.
+//note of Mateusz Rożek<br />
+To run ensure that server (https://github.com/mateuszrozek/bowling-srv) is running.<br />
+Start client with `npm start`<br />
 
 
-//generic note
+//generic note<br />
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
